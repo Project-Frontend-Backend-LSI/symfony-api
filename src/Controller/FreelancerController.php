@@ -38,7 +38,15 @@ class FreelancerController extends AbstractController
     public function create(ManagerRegistry $doctrine, Request $request): JsonResponse
     {
         $entityManager = $doctrine->getManager();
+        $freelancers = $doctrine
+            ->getRepository(Freelancer::class)
+            ->findAll();
    
+        foreach ($freelancers as $freelancer) {
+           if($freelancer->getEmail()==$request->request->get('email') || $freelancer->getUsername()==$request->request->get('username')){
+                return $this->json('Email or username already existe' , 404); 
+           }
+        }
         $freelancer = new Freelancer();
         $freelancer->setEmail($request->request->get('email'));
         $freelancer->setUsername($request->request->get('username'));
